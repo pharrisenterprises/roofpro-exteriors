@@ -11,7 +11,7 @@ export default function Page() {
           {/* --- Logo left (scaled larger without growing header) --- */}
           <div className="flex items-center -mt-2 scale-125 origin-left">
             <Image
-              src="/logo-roofpro.PNG"   // <-- match case in /public
+              src="/logo-roofpro.PNG"   // match case in /public
               alt="RoofPro Exteriors Logo"
               width={200}
               height={70}
@@ -22,17 +22,15 @@ export default function Page() {
 
           {/* --- Nav right --- */}
           <nav className="sc-topnav flex justify-end items-center flex-wrap gap-x-6 gap-y-2 text-base md:text-lg font-semibold tracking-wide">
-            {["Home", "About", "Solutions", "Reviews", "FAQ", "Contact"].map(
-              (item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className="hover:text-blue-800 transition-colors duration-200"
-                >
-                  {item}
-                </a>
-              )
-            )}
+            {["Home", "About", "Solutions", "Reviews", "FAQ", "Contact"].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="hover:text-blue-800 transition-colors duration-200"
+              >
+                {item}
+              </a>
+            ))}
           </nav>
         </div>
       </header>
@@ -41,9 +39,7 @@ export default function Page() {
       <section className="relative w-full bg-white overflow-hidden">
         <div
           className="w-full h-[60vh] md:h-[68vh] bg-cover bg-center flex flex-col items-center justify-center relative"
-          style={{
-            backgroundImage: "url('/hero.JPG')", // <-- match case
-          }}
+          style={{ backgroundImage: "url('/hero.JPG')" }} // match case
         >
           <div className="absolute inset-0 bg-black/15" />
           <div className="absolute bottom-10 flex flex-wrap justify-center gap-6 z-20">
@@ -78,7 +74,7 @@ export default function Page() {
             Expert Roofing, Siding, Gutters & Exterior Repairs
           </motion.h1>
           <p className="text-slate-700 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-            Locally owned & operated in Central Virginia — durable materials, clean installs, and dependable service.
+            Locally owned &amp; operated in Central Virginia — durable materials, clean installs, and dependable service.
           </p>
         </div>
       </section>
@@ -106,22 +102,22 @@ export default function Page() {
             {
               title: "Roofing",
               desc: "Architectural shingles, metal roofing, and leak-free flashing — installed to spec.",
-              image: "/hero-roofing.JPG", // <-- match case
+              image: "/hero-roofing.JPG",
             },
             {
               title: "Siding",
               desc: "Fiber cement, vinyl, and trim solutions with airtight detailing and clean lines.",
-              image: "/hero-siding.JPG", // <-- match case
+              image: "/hero-siding.JPG",
             },
             {
               title: "Gutters",
               desc: "Seamless gutters, guards, and proper downspout placement to move water away fast.",
-              image: "/hero-gutters.JPG", // <-- match case
+              image: "/hero-gutters.JPG",
             },
             {
               title: "Exterior Repairs",
               desc: "Storm damage, fascia/soffit, flashing, and carpentry fixes that last.",
-              image: "/hero-repairs.JPG", // <-- match case
+              image: "/hero-repairs.JPG",
             },
           ].map((item) => (
             <div
@@ -176,7 +172,9 @@ export default function Page() {
               key={review.name}
               className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all"
             >
-              <p className="text-slate-700 italic mb-3">"{review.text}"</p>
+              <p className="text-slate-700 italic mb-3">
+                &ldquo;{review.text}&rdquo;
+              </p>
               <span className="font-semibold text-slate-800">
                 ⭐️⭐️⭐️⭐️⭐️ — {review.name}
               </span>

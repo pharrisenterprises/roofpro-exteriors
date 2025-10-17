@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import NavLink from "@/components/NavLink";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
@@ -21,12 +22,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="w-full border-b bg-white">
           <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
             {/* Logo / Brand */}
-            <a href="/" className="flex items-center gap-2 font-semibold">
-              {/* Make sure the case matches your /public asset exactly */}
+            <Link href="/" className="flex items-center gap-2 font-semibold">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo-roofpro.png" alt="RoofPro Exteriors" className="h-8 w-auto" />
+              <img src="/logo-roofpro.PNG" alt="RoofPro Exteriors" className="h-8 w-auto" />
               <span>RoofPro Exteriors</span>
-            </a>
+            </Link>
 
             {/* Primary Nav */}
             <nav className="flex items-center gap-1">
