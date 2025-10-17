@@ -11,7 +11,7 @@ export default function Page() {
           {/* --- Logo left (scaled larger without growing header) --- */}
           <div className="flex items-center -mt-2 scale-125 origin-left">
             <Image
-              src="/logo-roofpro.png"
+              src="/logo-roofpro.PNG"   // <-- match case in /public
               alt="RoofPro Exteriors Logo"
               width={200}
               height={70}
@@ -42,7 +42,7 @@ export default function Page() {
         <div
           className="w-full h-[60vh] md:h-[68vh] bg-cover bg-center flex flex-col items-center justify-center relative"
           style={{
-            backgroundImage: "url(/hero.jpg)",
+            backgroundImage: "url('/hero.JPG')", // <-- match case
           }}
         >
           <div className="absolute inset-0 bg-black/15" />
@@ -106,22 +106,22 @@ export default function Page() {
             {
               title: "Roofing",
               desc: "Architectural shingles, metal roofing, and leak-free flashing — installed to spec.",
-              image: "/hero-roofing.jpg",
+              image: "/hero-roofing.JPG", // <-- match case
             },
             {
               title: "Siding",
               desc: "Fiber cement, vinyl, and trim solutions with airtight detailing and clean lines.",
-              image: "/hero-siding.jpg",
+              image: "/hero-siding.JPG", // <-- match case
             },
             {
               title: "Gutters",
               desc: "Seamless gutters, guards, and proper downspout placement to move water away fast.",
-              image: "/hero-gutters.jpg",
+              image: "/hero-gutters.JPG", // <-- match case
             },
             {
               title: "Exterior Repairs",
               desc: "Storm damage, fascia/soffit, flashing, and carpentry fixes that last.",
-              image: "/hero-repairs.jpg",
+              image: "/hero-repairs.JPG", // <-- match case
             },
           ].map((item) => (
             <div
