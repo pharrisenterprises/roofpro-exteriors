@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
 
-export function generateMetadata(
-  { params }: { params: { slug: string } }
-): Metadata {
-  const title = params.slug.replace(/-/g, " ");
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await params;
+  const title = slug.replace(/-/g, " ");
   return { title: `${title} | Exterior Repairs Blog` };
 }
 
-export default function Page(
-  { params }: { params: { slug: string } }
+export default async function Page(
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const title = params.slug.replace(/-/g, " ");
+  const { slug } = await params;
+  const title = slug.replace(/-/g, " ");
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
       <h1 className="text-3xl font-bold capitalize">{title}</h1>
