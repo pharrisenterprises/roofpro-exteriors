@@ -1,20 +1,30 @@
-type Params = { params: { slug: string } };
+import type { Metadata } from "next";
 
-export const generateStaticParams = () => ([
-  { slug: 'roof-replacement-vs-repair' },
-  { slug: 'roof-lifespan-in-virginia' },
-]);
+// This signature accepts either a Promise-like `params` or a plain object.
+// Using `await` makes it compatible with both.
+export async function generateMetadata(
+  { params }: { params: unknown }
+): Promise<Metadata> {
+  const p = (await (params as any)) ?? {};
+  const slug: string = String(p.slug ?? "").trim();
+  const title = slug ? slug.replace(/-/g, " ") : "Article";
+  return { title: `${title} | RoofPro Exteriors Blog` };
+}
 
-export const metadata = ({ params }: Params) => ({
-  title: `${params.slug.replace(/-/g,' ')} | Roofing Blog`,
-});
+export default async function Page(
+  { params }: { params: unknown }
+) {
+  const p = (await (params as any)) ?? {};
+  const slug: string = String(p.slug ?? "").trim();
+  const title = slug ? slug.replace(/-/g, " ") : "Article";
 
-export default function Page({ params }: Params) {
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-bold capitalize">{params.slug.replace(/-/g, ' ')}</h1>
-      <p className="mt-3 text-neutral-700">This is a placeholder. Hook this to Sanity when ready.</p>
-      <a href="/roofing" className="underline mt-6 inline-block">← Back to Roofing</a>
+      <h1 className="text-3xl font-bold capitalize">{title}</h1>
+      <p className="mt-3 text-neutral-700">
+        Placeholder article. Connect this route to your CMS when ready.
+      </p>
+      <a href="/" className="underline mt-6 inline-block">← Back to Home</a>
     </main>
   );
 }
