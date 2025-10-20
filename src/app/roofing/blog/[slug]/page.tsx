@@ -1,18 +1,26 @@
 import { groq } from "next-sanity";
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
-import { client } from "@/sanity/lib/client";     // <-- named import
+import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 
 export const revalidate = 60;
+
+export const metadata = {
+  title: "Roofing Blog Post | RoofPro Exteriors",
+  description: "Roofing insights and how-tos from RoofPro Exteriors.",
+};
 
 const POST_QUERY = groq`*[_type=="blog" && slug.current==$slug][0]{
   _id, title, slug, excerpt, coverImage, publishedAt,
   service->{title, slug}, content
 }`;
 
-export default async function RoofingPostPage({ params }: { params: { slug: string } }) {
-  const post = await client.fetch(POST_QUERY, { slug: params.slug }); // <-- use client
+export default async function RoofingPostPage(
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await params;
+  const post = await client.fetch(POST_QUERY, { slug });
 
   if (!post) {
     return (

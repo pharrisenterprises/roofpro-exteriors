@@ -16,8 +16,11 @@ const POST_QUERY = groq`*[_type=="blog" && slug.current==$slug][0]{
   service->{title, slug}, content
 }`;
 
-export default async function ExtRepairsPostPage({ params }: { params: { slug: string } }) {
-  const post = await client.fetch(POST_QUERY, { slug: params.slug });
+export default async function ExtRepairsPostPage(
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await params;
+  const post = await client.fetch(POST_QUERY, { slug });
 
   if (!post) {
     return (
