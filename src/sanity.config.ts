@@ -7,8 +7,8 @@ import {schemaTypes} from "./sanity/schemaTypes"; // <-- path now relative to /s
 export default defineConfig({
   name: "default",
   title: "RoofPro Exteriors CMS",
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  projectId: "jvwz09do",
+  dataset: "production",
   basePath: "/studio",
   plugins: [deskTool(), visionTool()],
   schema: { types: schemaTypes },
