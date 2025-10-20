@@ -1,26 +1,57 @@
+import { groq } from "next-sanity";
 import Link from "next/link";
-import { SERVICES } from "@/content/services";
+import Image from "next/image";
+import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
 
-export const metadata = { title: "Exterior Repairs Blog | Roof Pro Exteriors" };
+export const revalidate = 60;
 
-export default function Page() {
-  const posts = SERVICES['exterior-repairs'].samplePosts;
+export const metadata = {
+  title: "Exterior Repairs Blog | RoofPro Exteriors",
+  description: "Exterior repair how-tos and guides for Central Virginia homeowners.",
+};
+
+const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
+|order(publishedAt desc)[0...20]{
+  _id, title, slug, excerpt, coverImage, publishedAt,
+  service->{title, slug}
+}`;
+
+export default async function ExtRepairsBlogIndex() {
+  const posts = await client.fetch(QUERY, { serviceSlug: "exterior-repairs" });
+
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-bold">Exterior Repairs Blog</h1>
-      {posts.length === 0 ? (
-        <p className="mt-3 text-neutral-700">Articles are coming soon.</p>
-      ) : (
-        <ul className="mt-6 list-disc ml-5">
-          {posts.map((p) => (
-            <li key={p.slug}>
-              <Link href={`/exterior-repairs/blog/${p.slug}`} className="underline">
-                {p.title}
-              </Link>
-            </li>
-          ))}
-        </ul>
+    <main className="mx-auto max-w-4xl px-4 py-12">
+      <h1 className="text-3xl font-bold mb-6">Exterior Repairs Blog</h1>
+
+      {(!posts || posts.length === 0) && (
+        <p className="text-neutral-600">No posts yet for Exterior Repairs.</p>
       )}
+
+      <ul className="space-y-8">
+        {posts?.map((p: any) => (
+          <li key={p._id} className="border rounded-xl p-4">
+            {p.coverImage && (
+              <Image
+                src={urlFor(p.coverImage).width(1200).height(630).url()}
+                alt={p.title}
+                width={1200}
+                height={630}
+                className="rounded-lg mb-3"
+              />
+            )}
+            <h2 className="text-xl font-semibold">
+              <Link href={`/exterior-repairs/blog/${p.slug.current}`}>{p.title}</Link>
+            </h2>
+            {p.publishedAt && (
+              <p className="text-sm text-neutral-500 mt-1">
+                {new Date(p.publishedAt).toLocaleDateString()}
+              </p>
+            )}
+            {p.excerpt && <p className="text-neutral-700 mt-2">{p.excerpt}</p>}
+          </li>
+        ))}
+      </ul>
     </main>
   );
 }
