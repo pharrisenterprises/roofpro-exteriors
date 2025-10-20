@@ -1,26 +1,55 @@
+import type { Metadata } from "next";
 import { groq } from "next-sanity";
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
+import type { Image as SanityImage, PortableTextBlock } from "sanity";
 
 export const revalidate = 60;
 
-export const metadata = {
-  title: "Exterior Repairs Blog Post | RoofPro Exteriors",
-  description: "Exterior repair insights from RoofPro Exteriors.",
+type Post = {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt?: string;
+  coverImage?: SanityImage;
+  publishedAt?: string;
+  content?: PortableTextBlock[];
+  seo?: { title?: string; description?: string; ogImage?: SanityImage };
 };
 
 const POST_QUERY = groq`*[_type=="blog" && slug.current==$slug][0]{
-  _id, title, slug, excerpt, coverImage, publishedAt,
-  service->{title, slug}, content
+  _id, title, slug, excerpt, coverImage, publishedAt, content,
+  seo { title, description, ogImage }
 }`;
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await params;
+  const data: Post | null = await client.fetch(POST_QUERY, { slug });
+
+  const baseTitle = data?.title ?? "Blog Post";
+  const title = data?.seo?.title ?? `${baseTitle} | RoofPro Exteriors`;
+  const description = data?.seo?.description ?? data?.excerpt ?? "";
+
+  const og = data?.seo?.ogImage ?? data?.coverImage;
+  const images = og ? [{ url: urlFor(og).width(1200).height(630).url() }] : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, images },
+    twitter: { card: "summary_large_image" },
+  };
+}
 
 export default async function ExtRepairsPostPage(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const post = await client.fetch(POST_QUERY, { slug });
+  const post: Post | null = await client.fetch(POST_QUERY, { slug });
 
   if (!post) {
     return (
@@ -47,9 +76,11 @@ export default async function ExtRepairsPostPage(
           className="rounded-lg my-4"
         />
       )}
-      <article className="prose prose-neutral max-w-none">
-        <PortableText value={post.content} />
-      </article>
+      {post.content && (
+        <article className="prose prose-neutral max-w-none">
+          <PortableText value={post.content} />
+        </article>
+      )}
     </main>
   );
 }
