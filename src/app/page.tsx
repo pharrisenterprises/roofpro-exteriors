@@ -1,17 +1,18 @@
 ﻿"use client";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function Page() {
   return (
     <main className="flex flex-col items-center bg-white text-slate-800 font-sans">
-      {/* === HEADER (note: your root layout also has a header now) === */}
+      {/* === HEADER === */}
       <header className="w-full bg-white py-2 shadow-sm z-50">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between flex-wrap">
-          {/* --- Logo left (scaled larger without growing header) --- */}
+          {/* Logo */}
           <div className="flex items-center -mt-2 scale-125 origin-left">
             <Image
-              src="/logo-roofpro.PNG"   // match case in /public
+              src="/logo-roofpro.PNG"
               alt="RoofPro Exteriors Logo"
               width={200}
               height={70}
@@ -20,7 +21,7 @@ export default function Page() {
             />
           </div>
 
-          {/* --- Nav right --- */}
+          {/* Nav */}
           <nav className="sc-topnav flex justify-end items-center flex-wrap gap-x-6 gap-y-2 text-base md:text-lg font-semibold tracking-wide">
             {["Home", "About", "Solutions", "Reviews", "FAQ", "Contact"].map((item) => (
               <a
@@ -39,7 +40,7 @@ export default function Page() {
       <section className="relative w-full bg-white overflow-hidden">
         <div
           className="w-full h-[60vh] md:h-[68vh] bg-cover bg-center flex flex-col items-center justify-center relative"
-          style={{ backgroundImage: "url('/hero.JPG')" }} // match case
+          style={{ backgroundImage: "url('/hero.JPG')" }}
         >
           <div className="absolute inset-0 bg-black/15" />
           <div className="absolute bottom-10 flex flex-wrap justify-center gap-6 z-20">
@@ -63,7 +64,7 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Headline visible on landing */}
+        {/* Headline */}
         <div className="text-center mt-6 px-6 mb-6 relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 25 }}
@@ -103,47 +104,55 @@ export default function Page() {
               title: "Roofing",
               desc: "Architectural shingles, metal roofing, and leak-free flashing — installed to spec.",
               image: "/hero-roofing.JPG",
+              slug: "roofing",
             },
             {
               title: "Siding",
               desc: "Fiber cement, vinyl, and trim solutions with airtight detailing and clean lines.",
               image: "/hero-siding.JPG",
+              slug: "siding",
             },
             {
               title: "Gutters",
               desc: "Seamless gutters, guards, and proper downspout placement to move water away fast.",
               image: "/hero-gutters.JPG",
+              slug: "gutters",
             },
             {
               title: "Exterior Repairs",
               desc: "Storm damage, fascia/soffit, flashing, and carpentry fixes that last.",
               image: "/hero-repairs.JPG",
+              slug: "exterior-repairs",
             },
           ].map((item) => (
-            <div
+            <Link
               key={item.title}
-              className="flex flex-col items-center w-[230px] bg-white border border-slate-300 rounded-lg shadow-md hover:shadow-lg transition-all"
+              href={`/${item.slug}`}
+              prefetch
+              className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 rounded-lg"
             >
-              <div className="w-full h-[130px] overflow-hidden rounded-t-lg">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  width={230}
-                  height={130}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <div className="bg-slate-50 border-t border-slate-200 w-full text-center">
-                <div className="m-3 p-4 bg-white border border-slate-200 rounded-md shadow-sm">
-                  <h3 className="text-base font-semibold text-slate-900 mb-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-slate-700 text-sm leading-snug px-3">
-                    {item.desc}
-                  </p>
+              <article className="flex flex-col items-center w-[230px] bg-white border border-slate-300 rounded-lg shadow-md hover:shadow-lg transition-all">
+                <div className="w-full h-[130px] overflow-hidden rounded-t-lg">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    width={230}
+                    height={130}
+                    className="object-cover w-full h-full"
+                  />
                 </div>
-              </div>
-            </div>
+                <div className="bg-slate-50 border-t border-slate-200 w-full text-center">
+                  <div className="m-3 p-4 bg-white border border-slate-200 rounded-md shadow-sm">
+                    <h3 className="text-base font-semibold text-slate-900 mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-slate-700 text-sm leading-snug px-3">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            </Link>
           ))}
         </div>
       </section>
@@ -233,7 +242,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* === CONTACT SECTION (added) === */}
+      {/* === CONTACT SECTION === */}
       <section id="contact" className="mx-auto max-w-3xl px-4 py-16">
         <h2 className="text-2xl font-semibold mb-3">Contact Us</h2>
         {/* your form or contact info here */}
