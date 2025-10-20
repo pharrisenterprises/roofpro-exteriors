@@ -1,10 +1,16 @@
 import { groq } from "next-sanity";
 import Link from "next/link";
 import Image from "next/image";
-import { client } from "@/sanity/lib/client";     // <-- named import
+import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
+import type { BlogPost } from "@/types/cms";
 
 export const revalidate = 60;
+
+export const metadata = {
+  title: "Roofing Blog | RoofPro Exteriors",
+  description: "Guides and tips on roofing repair, replacement, and maintenance in Greater Richmond, VA.",
+};
 
 const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
 |order(publishedAt desc)[0...20]{
@@ -13,14 +19,14 @@ const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
 }`;
 
 export default async function RoofingBlogIndex() {
-  const posts = await client.fetch(QUERY, { serviceSlug: "roofing" }); // <-- use client
+  const posts: BlogPost[] = await client.fetch(QUERY, { serviceSlug: "roofing" });
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="text-3xl font-bold mb-6">Roofing Blog</h1>
-      {(!posts || posts.length === 0) && <p>No posts yet. Check back soon.</p>}
+      {(!posts || posts.length === 0) && <p className="text-neutral-600">No posts yet for Roofing.</p>}
       <ul className="space-y-8">
-        {posts?.map((p: any) => (
+        {posts.map((p) => (
           <li key={p._id} className="border rounded-xl p-4">
             {p.coverImage && (
               <Image

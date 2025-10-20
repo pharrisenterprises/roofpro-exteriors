@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
+import type { BlogPost } from "@/types/cms";
 
 export const revalidate = 60;
 
@@ -18,18 +19,14 @@ const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
 }`;
 
 export default async function SidingBlogIndex() {
-  const posts = await client.fetch(QUERY, { serviceSlug: "siding" });
+  const posts: BlogPost[] = await client.fetch(QUERY, { serviceSlug: "siding" });
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="text-3xl font-bold mb-6">Siding Blog</h1>
-
-      {(!posts || posts.length === 0) && (
-        <p className="text-neutral-600">No posts yet for Siding.</p>
-      )}
-
+      {posts.length === 0 && <p className="text-neutral-600">No posts yet for Siding.</p>}
       <ul className="space-y-8">
-        {posts?.map((p: any) => (
+        {posts.map((p) => (
           <li key={p._id} className="border rounded-xl p-4">
             {p.coverImage && (
               <Image
