@@ -86,7 +86,7 @@ export default function Page() {
           Built Right. Guaranteed.
         </h2>
         <p className="text-slate-700 leading-relaxed max-w-2xl mx-auto">
-          Every RoofPro project is measured, specified, and installed by pros using manufacturer-approved methods.
+          Every <strong>RoofPro Exteriors</strong> project is measured, specified, and installed by pros using manufacturer-approved methods.
           We protect your home’s value with premium roofing systems, sealed siding, properly pitched gutters, and
           smart exterior repairs that withstand Virginia weather.
         </p>
@@ -174,7 +174,7 @@ export default function Page() {
             },
             {
               name: "Tom H.",
-              text: "On time, fair price, quality work. Highly recommend RoofPro.",
+              text: "On time, fair price, quality work. Highly recommend RoofPro Exteriors.",
             },
           ].map((review) => (
             <div
