@@ -65,7 +65,7 @@ export default function ServicePage({ service }: { service: ServiceConfig }) {
             <ul className="list-disc ml-5">
               {samplePosts.map(p => (
                 <li key={p.slug}>
-                  <Link href={`/${slug}/blog/${p.slug}`} className="underline">
+                  <Link href={`/${slug}/blog`} className="underline">
                     {p.title}
                   </Link>
                 </li>
