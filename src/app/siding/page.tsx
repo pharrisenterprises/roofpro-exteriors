@@ -1,11 +1,10 @@
-import ServicePage, { getService } from '@/components/ServicePage';
-export const metadata = { title: 'Siding | Roof Pro Exteriors' };
-export default function Page() { return <ServicePage service={getService('siding')} />; }
-
 import type { Metadata } from "next";
 import { groq } from "next-sanity";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
+import ServicePage, { getService } from "@/components/ServicePage";
+
+export const revalidate = 60;
 
 const SERVICE_SEO_QUERY = groq`*[_type=="service" && slug.current==$slug][0]{
   title,
@@ -13,13 +12,11 @@ const SERVICE_SEO_QUERY = groq`*[_type=="service" && slug.current==$slug][0]{
 }`;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const data = await client.fetch(SERVICE_SEO_QUERY, { slug: "siding" }); // change per page
+  const data = await client.fetch(SERVICE_SEO_QUERY, { slug: "siding" });
 
-  const title =
-    data?.seo?.title ??
-    `${data?.title ?? "Roofing"} | RoofPro Exteriors`;
+  const title = data?.seo?.title ?? `${data?.title ?? "Siding"} | RoofPro Exteriors`;
   const description =
-    data?.seo?.description ?? "Professional roofing services in Greater Richmond, VA.";
+    data?.seo?.description ?? "Durable siding solutions for Central Virginia homes.";
 
   const images = data?.seo?.ogImage
     ? [{ url: urlFor(data.seo.ogImage).width(1200).height(630).url() }]
@@ -31,4 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: { title, description, images },
     twitter: { card: "summary_large_image" },
   };
+}
+
+export default function Page() {
+  return <ServicePage service={getService("siding")} />;
 }
