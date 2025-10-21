@@ -10,14 +10,14 @@ export default function Page() {
       <header className="w-full bg-white py-2 shadow-sm z-50">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between flex-wrap">
           {/* Logo */}
-          <div className="flex items-center -mt-2 scale-125 origin-left">
+          <div className="flex items-center">
             <Image
               src="/RoofPro-Exteriors New Logo.jpg"
               alt="RoofPro Exteriors Logo"
               width={180}
               height={50}
               priority
-              className="object-contain drop-shadow-sm w-[160px] md:w-[180px] lg:w-[200px] h-auto"
+              className="object-contain drop-shadow-sm w-[140px] md:w-[160px] lg:w-[180px] h-auto"
             />
           </div>
 
