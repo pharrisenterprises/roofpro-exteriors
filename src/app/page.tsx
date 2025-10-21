@@ -12,7 +12,7 @@ export default function Page() {
           {/* Logo */}
           <div className="flex items-center -mt-2 scale-125 origin-left">
             <Image
-              src="/logo-roofpro.PNG"
+              src="/RoofPro-Exteriors New Logo.jpg"
               alt="RoofPro Exteriors Logo"
               width={200}
               height={70}
