@@ -14,10 +14,10 @@ export default function Page() {
             <Image
               src="/RoofPro-Exteriors New Logo.jpg"
               alt="RoofPro Exteriors Logo"
-              width={140}
-              height={50}
+              width={200}
+              height={70}
               priority
-              className="h-10 w-auto"
+              className="h-10 md:h-12 lg:h-14 w-auto"
             />
           </div>
 
