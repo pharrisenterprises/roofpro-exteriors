@@ -8,17 +8,13 @@ import { groq } from "next-sanity";
 
 export const revalidate = 60;
 
-// We will **query** Sanity with the capitalized slug,
-// but we will **link** on-site using the lowercase route.
-const SANITY_SLUG = "Gutters";
-const ROUTE_SLUG = "gutters";
-
 interface Blog {
   _id: string;
   title: string;
   slug: string;
   excerpt?: string;
 }
+
 interface Faq {
   _id: string;
   question: string;
@@ -26,37 +22,22 @@ interface Faq {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: SANITY_SLUG });
-
+  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: "gutters" });
   const title = data?.seo?.title ?? "Gutters | RoofPro Exteriors";
   const description =
-    data?.seo?.description ?? "Gutter installation, repair, and protection in Greater Richmond, VA.";
+    data?.seo?.description ?? "Professional gutters installation and repair services in Richmond, VA.";
   const ogSrc = data?.seo?.ogImage ?? data?.heroImage;
   const images = ogSrc ? [{ url: urlFor(ogSrc).width(1200).height(630).url() }] : undefined;
-
-  return {
-    title,
-    description,
-    openGraph: { title, description, images },
-    twitter: { card: "summary_large_image" },
-  };
+  return { title, description, openGraph: { title, description, images }, twitter: { card: "summary_large_image" } };
 }
 
 export default async function Page() {
+  const slug = "gutters";
+
   const [data, blogs, faqs] = await Promise.all([
-    client.fetch(SERVICE_BY_SLUG_QUERY, { slug: SANITY_SLUG }),
-    client.fetch(
-      groq`*[_type=="blog" && service->slug.current==$slug]{
-        _id, title, "slug": slug.current, excerpt
-      }`,
-      { slug: SANITY_SLUG }
-    ),
-    client.fetch(
-      groq`*[_type=="faq" && service->slug.current==$slug]{
-        _id, question, "slug": slug.current
-      }`,
-      { slug: SANITY_SLUG }
-    ),
+    client.fetch(SERVICE_BY_SLUG_QUERY, { slug }),
+    client.fetch(groq`*[_type=="blog" && service->slug.current==$slug]{ _id, title, "slug":slug.current, excerpt }`, { slug }),
+    client.fetch(groq`*[_type=="faq" && service->slug.current==$slug]{ _id, question, "slug":slug.current }`, { slug }),
   ]);
 
   if (!data) {
@@ -79,11 +60,8 @@ export default async function Page() {
             {blogs.map((p: Blog) => (
               <li key={p._id} className="border rounded-xl p-4">
                 <h3 className="text-lg font-semibold">{p.title}</h3>
-                {p.excerpt && <p className="text-sm text-gray-600">{p.excerpt}</p>}
-                <Link
-                  href={`/${ROUTE_SLUG}/blog/${p.slug}`}
-                  className="text-blue-700 underline mt-2 inline-block"
-                >
+                <p className="text-sm text-gray-600">{p.excerpt}</p>
+                <Link href={`/${slug}/blog/${p.slug}`} className="text-blue-700 underline mt-2 inline-block">
                   Read More
                 </Link>
               </li>
@@ -101,10 +79,7 @@ export default async function Page() {
             {faqs.map((f: Faq) => (
               <li key={f._id} className="border rounded-xl p-4">
                 <h3 className="text-lg font-semibold">{f.question}</h3>
-                <Link
-                  href={`/${ROUTE_SLUG}/faq#${f.slug}`}
-                  className="text-blue-700 underline mt-2 inline-block"
-                >
+                <Link href={`/${slug}/faq#${f.slug}`} className="text-blue-700 underline mt-2 inline-block">
                   View Answer
                 </Link>
               </li>

@@ -8,17 +8,14 @@ import type { Faq } from "@/types/cms";
 
 export const revalidate = 60;
 
-// Query Sanity with capitalized slug:
-const SANITY_SLUG = "Gutters";
-
 export async function generateMetadata(): Promise<Metadata> {
-  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: SANITY_SLUG });
+  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: "gutters" });
 
   const title = data?.seo?.title
     ? `${data.seo.title} – FAQs`
     : "Gutters FAQs | RoofPro Exteriors";
   const description =
-    data?.seo?.description ?? "Common gutter questions answered by our Richmond, VA team.";
+    data?.seo?.description ?? "Common gutters questions answered by our Richmond, VA team.";
   const ogSrc = data?.seo?.ogImage ?? data?.heroImage;
   const images = ogSrc ? [{ url: urlFor(ogSrc).width(1200).height(630).url() }] : undefined;
 
@@ -27,7 +24,6 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     openGraph: { title, description, images },
     twitter: { card: "summary_large_image" },
-    // Site route stays lowercase:
     alternates: { canonical: "https://roofproexteriors.com/gutters/faq" },
   };
 }
@@ -36,7 +32,7 @@ const QUERY = groq`*[_type=="faq" && service->slug.current==$serviceSlug]
 |order(question asc){ _id, question, answer }`;
 
 export default async function Page() {
-  const faqs: Faq[] = await client.fetch(QUERY, { serviceSlug: SANITY_SLUG });
+  const faqs: Faq[] = await client.fetch(QUERY, { serviceSlug: "gutters" });
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
@@ -53,5 +49,5 @@ export default async function Page() {
         {faqs.length === 0 && <p>No FAQs yet.</p>}
       </ul>
     </main>
-  );
+  ); 
 }
