@@ -1,35 +1,25 @@
+// src/app/roofing/page.tsx  (repeat the same pattern for siding/gutters/exterior-repairs)
 import type { Metadata } from "next";
-import { groq } from "next-sanity";
 import { client } from "@/sanity/lib/client";
-import { urlFor } from "@/sanity/lib/image";
-import ServicePage, { getService } from "@/components/ServicePage";
+import { SERVICE_BY_SLUG_QUERY } from "@/sanity/lib/queries";
+import ServiceFromSanity from "@/components/ServiceFromSanity";
 
 export const revalidate = 60;
 
-const SERVICE_SEO_QUERY = groq`*[_type=="service" && slug.current==$slug][0]{
-  title,
-  seo { title, description, ogImage }
-}`;
+export const metadata: Metadata = {
+  title: "Roofing | RoofPro Exteriors",
+  description: "Roof repair, replacement, and inspections in Greater Richmond, VA.",
+};
 
-export async function generateMetadata(): Promise<Metadata> {
-  const data = await client.fetch(SERVICE_SEO_QUERY, { slug: "gutters" });
-
-  const title = data?.seo?.title ?? `${data?.title ?? "Gutters"} | RoofPro Exteriors`;
-  const description =
-    data?.seo?.description ?? "Seamless gutters, guards, and downspout placement done right.";
-
-  const images = data?.seo?.ogImage
-    ? [{ url: urlFor(data.seo.ogImage).width(1200).height(630).url() }]
-    : undefined;
-
-  return {
-    title,
-    description,
-    openGraph: { title, description, images },
-    twitter: { card: "summary_large_image" },
-  };
-}
-
-export default function Page() {
-  return <ServicePage service={getService("gutters")} />;
+export default async function Page() {
+  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: "gutters" });
+  if (!data) {
+    return (
+      <main className="mx-auto max-w-4xl px-4 py-12">
+        <h1 className="text-3xl font-bold">Roofing</h1>
+        <p className="mt-2 text-neutral-700">Content coming soon.</p>
+      </main>
+    );
+  }
+  return <ServiceFromSanity {...data} />;
 }
