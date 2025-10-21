@@ -1,6 +1,27 @@
 import Link from 'next/link';
-import FaqAccordion from './FaqAccordion';
-import { SERVICES, type ServiceConfig } from '@/content/services';
+import FaqAccordion, { type FaqItem } from './FaqAccordion';
+
+// Local types replacing the old '@/content/services' dependency
+type ServiceHero = {
+  headline: string;
+  sub: string;
+  image?: string | null;
+};
+
+type ServiceSections = {
+  intro: { heading: string; body: string };
+  benefits: { heading: string; bullets: string[] };
+  process: { heading: string; steps: { title: string; desc: string }[] };
+  cta: { heading: string; body: string; buttonText: string };
+};
+
+export type ServiceConfig = {
+  slug: string;
+  hero: ServiceHero;
+  sections: ServiceSections;
+  faqs: FaqItem[];
+  samplePosts: { slug: string; title: string }[];
+};
 
 export default function ServicePage({ service }: { service: ServiceConfig }) {
   const { hero, sections, faqs, slug, samplePosts } = service;
@@ -63,7 +84,7 @@ export default function ServicePage({ service }: { service: ServiceConfig }) {
           <div className="pt-6">
             <h3 className="font-semibold mb-2">From the blog</h3>
             <ul className="list-disc ml-5">
-              {samplePosts.map(p => (
+              {samplePosts.map((p) => (
                 <li key={p.slug}>
                   <Link href={`/${slug}/blog`} className="underline">
                     {p.title}
@@ -87,6 +108,8 @@ export default function ServicePage({ service }: { service: ServiceConfig }) {
   );
 }
 
-export function getService(slug: keyof typeof SERVICES) {
-  return SERVICES[slug];
+// Deprecated helper kept only to avoid breaking old imports during refactor.
+// Remove after confirming no files call this.
+export function getService(_slug: string): never {
+  throw new Error("Deprecated: getService() was removed. Fetch service content from Sanity instead.");
 }
