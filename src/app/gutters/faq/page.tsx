@@ -32,7 +32,15 @@ const QUERY = groq`*[_type=="faq" && service->slug.current==$serviceSlug]
 |order(question asc){ _id, question, answer }`;
 
 export default async function Page() {
-  const faqs: Faq[] = await client.fetch(QUERY, { serviceSlug: "gutters" });
+  const faqs: Faq[] = await client.fetch(
+    groq`*[_type=="faq"
+        && defined(service->slug.current)
+        && lower(service->slug.current) == lower($serviceSlug)]
+      | order(question asc){
+        _id, question, answer
+      }`,
+    { serviceSlug: "Gutters" }
+  );
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
