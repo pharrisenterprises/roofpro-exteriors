@@ -22,17 +22,20 @@ interface Faq {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: "Gutters" });
+  // ✅ use lowercase slug
+  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: "gutters" });
+
   const title = data?.seo?.title ?? "Gutters | RoofPro Exteriors";
   const description =
-    data?.seo?.description ?? "Professional Gutters installation and repair services in Richmond, VA.";
+    data?.seo?.description ?? "Gutter installation, repair, and protection in Greater Richmond, VA.";
   const ogSrc = data?.seo?.ogImage ?? data?.heroImage;
   const images = ogSrc ? [{ url: urlFor(ogSrc).width(1200).height(630).url() }] : undefined;
   return { title, description, openGraph: { title, description, images }, twitter: { card: "summary_large_image" } };
 }
 
 export default async function Page() {
-  const slug = "Gutters";
+  // ✅ use lowercase slug everywhere
+  const slug = "gutters";
 
   const [data, blogs, faqs] = await Promise.all([
     client.fetch(SERVICE_BY_SLUG_QUERY, { slug }),
@@ -51,6 +54,7 @@ export default async function Page() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12 space-y-12">
+      {/* Renders hero (e.g., hero-gutters.JPG) + intro + sections from Sanity */}
       <ServiceFromSanity {...data} />
 
       <section>
@@ -60,7 +64,7 @@ export default async function Page() {
             {blogs.map((p: Blog) => (
               <li key={p._id} className="border rounded-xl p-4">
                 <h3 className="text-lg font-semibold">{p.title}</h3>
-                <p className="text-sm text-gray-600">{p.excerpt}</p>
+                {p.excerpt && <p className="text-sm text-gray-600">{p.excerpt}</p>}
                 <Link href={`/${slug}/blog/${p.slug}`} className="text-blue-700 underline mt-2 inline-block">
                   Read More
                 </Link>
