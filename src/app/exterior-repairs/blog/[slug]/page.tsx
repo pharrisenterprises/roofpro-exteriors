@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { groq } from "next-sanity";
 import Image from "next/image";
+import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
@@ -17,11 +18,13 @@ type Post = {
   publishedAt?: string;
   content?: PortableTextBlock[];
   seo?: { title?: string; description?: string; ogImage?: SanityImage };
+  service?: { title: string; slug: string };
 };
 
 const POST_QUERY = groq`*[_type=="blog" && slug.current==$slug][0]{
   _id, title, slug, excerpt, coverImage, publishedAt, content,
-  seo { title, description, ogImage }
+  seo { title, description, ogImage },
+  service->{ title, "slug": slug.current }
 }`;
 
 export async function generateMetadata(
@@ -61,6 +64,14 @@ export default async function ExtRepairsPostPage(
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
+      {post?.service?.slug && (
+        <div className="mb-3">
+          <Link href={`/${post.service.slug}`} className="text-sm underline">
+            ← Back to {post.service.title}
+          </Link>
+        </div>
+      )}
+
       <h1 className="text-3xl font-bold">{post.title}</h1>
       {post.publishedAt && (
         <p className="text-sm text-neutral-500 mt-1">
@@ -82,5 +93,5 @@ export default async function ExtRepairsPostPage(
         </article>
       )}
     </main>
-  );
+  ); 
 }
