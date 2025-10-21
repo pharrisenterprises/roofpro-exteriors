@@ -9,7 +9,7 @@ import type { Faq } from "@/types/cms";
 export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: "gutters" });
+  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: "Gutters" });
 
   const title = data?.seo?.title
     ? `${data.seo.title} – FAQs`
@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     openGraph: { title, description, images },
     twitter: { card: "summary_large_image" },
-    alternates: { canonical: "https://roofproexteriors.com/gutters/faq" },
+    alternates: { canonical: "https://roofproexteriors.com/Gutters/faq" },
   };
 }
 
@@ -32,7 +32,7 @@ const QUERY = groq`*[_type=="faq" && service->slug.current==$serviceSlug]
 |order(question asc){ _id, question, answer }`;
 
 export default async function Page() {
-  const faqs: Faq[] = await client.fetch(QUERY, { serviceSlug: "gutters" });
+  const faqs: Faq[] = await client.fetch(QUERY, { serviceSlug: "Gutters" });
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">

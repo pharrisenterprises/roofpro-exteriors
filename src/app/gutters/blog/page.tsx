@@ -19,7 +19,7 @@ const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
 }`;
 
 export default async function GuttersBlogIndex() {
-  const posts: BlogPost[] = await client.fetch(QUERY, { serviceSlug: "gutters" });
+  const posts: BlogPost[] = await client.fetch(QUERY, { serviceSlug: "Gutters" });
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
