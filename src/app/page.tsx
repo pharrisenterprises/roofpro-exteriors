@@ -14,8 +14,8 @@ export default function Page() {
             <Image
               src="/RoofPro-Exteriors New Logo.jpg"
               alt="RoofPro Exteriors Logo"
-              width={200}
-              height={70}
+              width={180}
+              height={50}
               priority
               className="object-contain drop-shadow-sm w-[160px] md:w-[180px] lg:w-[200px] h-auto"
             />
