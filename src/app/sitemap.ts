@@ -1,50 +1,61 @@
 // src/app/sitemap.ts
-import type { MetadataRoute } from "next";
-import { client } from "@/sanity/lib/client";
+import { MetadataRoute } from "next";
 import { groq } from "next-sanity";
+import { client } from "@/sanity/lib/client";
 
-type BlogDoc = {
-  url: string;                 // post slug
-  service?: string | null;     // related service slug
-  _updatedAt?: string;
-  _createdAt?: string;
-};
+const SERVICES_Q = groq`*[_type=="service" && defined(slug.current)]{
+  "slug": slug.current,
+  _updatedAt
+}`;
+
+const BLOG_Q = groq`*[_type=="blog" && defined(slug.current)]{
+  "slug": slug.current,
+  _updatedAt,
+  service->{ "slug": slug.current }
+}`;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = "https://www.roofproexteriors.com";
+  const base = "https://roofproexteriors.com";
 
-  // Core service pages
-  const services = ["roofing", "siding", "gutters", "exterior-repairs"];
-  const serviceUrls: MetadataRoute.Sitemap = services.map((s) => ({
-    url: `${base}/${s}`,
-    lastModified: new Date(),
+  const [services, posts] = await Promise.all([
+    client.fetch(SERVICES_Q),
+    client.fetch(BLOG_Q),
+  ]);
+
+  const nowIso = new Date().toISOString();
+
+  // Static pages
+  const staticPages: MetadataRoute.Sitemap = [
+    { url: `${base}/`, lastModified: nowIso, priority: 1.0 },
+    { url: `${base}/privacy`, lastModified: nowIso, priority: 0.3 },
+    { url: `${base}/terms`, lastModified: nowIso, priority: 0.3 },
+  ];
+
+  // Service landing pages
+  const servicePages: MetadataRoute.Sitemap = (services as any[]).map((s) => ({
+    url: `${base}/${s.slug}`,
+    lastModified: s._updatedAt ?? nowIso,
+    priority: 0.9,
   }));
 
-  // Blog posts nested under each service: /{service}/blog/{post}
-  let blogEntries: MetadataRoute.Sitemap = [];
-  try {
-    const posts = await client.fetch<BlogDoc[]>(
-      groq`*[_type=="blog" && defined(slug.current) && defined(service->slug.current)]{
-        "url": slug.current,
-        "service": service->slug.current,
-        _updatedAt,
-        _createdAt
-      }`
-    );
+  // Service FAQ pages
+  const faqPages: MetadataRoute.Sitemap = (services as any[]).map((s) => ({
+    url: `${base}/${s.slug}/faq`,
+    lastModified: s._updatedAt ?? nowIso,
+    priority: 0.6,
+  }));
 
-    blogEntries = posts
-      .filter((p): p is Required<Pick<BlogDoc, "url" | "service">> & BlogDoc => !!p.url && !!p.service)
-      .map((p) => {
-        const last = p._updatedAt ?? p._createdAt ?? new Date().toISOString();
-        return {
-          url: `${base}/${p.service}/blog/${p.url}`,
-          lastModified: new Date(last),
-        };
-      });
-  } catch {
-    // If Sanity is unreachable during build, return only static URLs
-    blogEntries = [];
-  }
+  // Blog posts under their service
+  const blogPages: MetadataRoute.Sitemap = (posts as any[]).map((p) => ({
+    url: `${base}/${p.service?.slug ?? "roofing"}/blog/${p.slug}`,
+    lastModified: p._updatedAt ?? nowIso,
+    priority: 0.5,
+  }));
 
-  return [...serviceUrls, ...blogEntries];
+  return [
+    ...staticPages,
+    ...servicePages,
+    ...faqPages,
+    ...blogPages,
+  ];
 }

@@ -1,14 +1,32 @@
+import type { Metadata } from "next";
 import { groq } from "next-sanity";
 import { PortableText } from "@portabletext/react";
 import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
+import { SERVICE_BY_SLUG_QUERY } from "@/sanity/lib/queries";
 import type { Faq } from "@/types/cms";
 
 export const revalidate = 60;
 
-export const metadata = {
-  title: "Roofing FAQs | RoofPro Exteriors",
-  description: "Common roofing questions answered by our Richmond, VA team.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: "roofing" });
+
+  const title = data?.seo?.title
+    ? `${data.seo.title} – FAQs`
+    : "Roofing FAQs | RoofPro Exteriors";
+  const description =
+    data?.seo?.description ?? "Common roofing questions answered by our Richmond, VA team.";
+  const ogSrc = data?.seo?.ogImage ?? data?.heroImage;
+  const images = ogSrc ? [{ url: urlFor(ogSrc).width(1200).height(630).url() }] : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, images },
+    twitter: { card: "summary_large_image" },
+    alternates: { canonical: "https://roofproexteriors.com/roofing/faq" },
+  };
+}
 
 const QUERY = groq`*[_type=="faq" && service->slug.current==$serviceSlug]
 |order(question asc){ _id, question, answer }`;
@@ -31,5 +49,5 @@ export default async function Page() {
         {faqs.length === 0 && <p>No FAQs yet.</p>}
       </ul>
     </main>
-  );
+  ); 
 }
