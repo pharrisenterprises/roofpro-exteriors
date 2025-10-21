@@ -8,8 +8,11 @@ import type { Faq } from "@/types/cms";
 
 export const revalidate = 60;
 
+// Query Sanity with capitalized slug:
+const SANITY_SLUG = "Gutters";
+
 export async function generateMetadata(): Promise<Metadata> {
-  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: "Gutters" });
+  const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: SANITY_SLUG });
 
   const title = data?.seo?.title
     ? `${data.seo.title} – FAQs`
@@ -24,7 +27,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     openGraph: { title, description, images },
     twitter: { card: "summary_large_image" },
-    alternates: { canonical: "https://roofproexteriors.com/Gutters/faq" },
+    // Site route stays lowercase:
+    alternates: { canonical: "https://roofproexteriors.com/gutters/faq" },
   };
 }
 
@@ -32,7 +36,7 @@ const QUERY = groq`*[_type=="faq" && service->slug.current==$serviceSlug]
 |order(question asc){ _id, question, answer }`;
 
 export default async function Page() {
-  const faqs: Faq[] = await client.fetch(QUERY, { serviceSlug: "Gutters" });
+  const faqs: Faq[] = await client.fetch(QUERY, { serviceSlug: SANITY_SLUG });
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">

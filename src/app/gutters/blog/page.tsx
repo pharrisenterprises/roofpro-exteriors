@@ -12,6 +12,9 @@ export const metadata = {
   description: "Gutter installation and maintenance tips for Richmond homes.",
 };
 
+// Query with the Sanity slug **exactly** as stored:
+const SANITY_SLUG = "Gutters";
+
 const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
 |order(publishedAt desc)[0...20]{
   _id, title, slug, excerpt, coverImage, publishedAt,
@@ -19,7 +22,7 @@ const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
 }`;
 
 export default async function GuttersBlogIndex() {
-  const posts: BlogPost[] = await client.fetch(QUERY, { serviceSlug: "Gutters" });
+  const posts: BlogPost[] = await client.fetch(QUERY, { serviceSlug: SANITY_SLUG });
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
@@ -38,6 +41,7 @@ export default async function GuttersBlogIndex() {
               />
             )}
             <h2 className="text-xl font-semibold">
+              {/* Site route stays lowercase */}
               <Link href={`/gutters/blog/${p.slug.current}`}>{p.title}</Link>
             </h2>
             {p.publishedAt && (

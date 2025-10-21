@@ -18,7 +18,7 @@ type Post = {
   publishedAt?: string;
   content?: PortableTextBlock[];
   seo?: { title?: string; description?: string; ogImage?: SanityImage };
-  service?: { title: string; slug: string };
+  service?: { title: string; slug: string }; // may be "Gutters"
 };
 
 const POST_QUERY = groq`*[_type=="blog" && slug.current==$slug][0]{
@@ -62,11 +62,14 @@ export default async function GuttersPostPage(
     );
   }
 
+  // Always link to lowercase site route, even if the service slug in Sanity is "Gutters"
+  const backRoute = `/${(post.service?.slug ?? "gutters").toLowerCase()}`;
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
       {post?.service?.slug && (
         <div className="mb-3">
-          <Link href={`/${post.service.slug}`} className="text-sm underline">
+          <Link href={backRoute} className="text-sm underline">
             ← Back to {post.service.title}
           </Link>
         </div>
