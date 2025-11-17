@@ -91,7 +91,7 @@ export default async function ExteriorRepairsPostPage(
       {post?.service?.slug && (
         <div className="mb-3">
           <Link href={`/${post.service.slug}`} className="text-sm underline">
-            <- Back to {post.service.title}
+            &larr; Back to {post.service.title}
           </Link>
         </div>
       )}

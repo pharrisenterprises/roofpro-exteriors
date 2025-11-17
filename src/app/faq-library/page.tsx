@@ -22,7 +22,7 @@ export default function Page() {
         <h2 className="text-xl font-semibold">Roofing FAQs</h2>
         <p className="text-neutral-700">Top questions homeowners ask.</p>
         <Link href="/roofing#faq" className="underline">
-          See Roofing FAQs ->
+          See Roofing FAQs &rarr;
         </Link>
       </section>
 
@@ -30,7 +30,7 @@ export default function Page() {
         <h2 className="text-xl font-semibold">Siding FAQs</h2>
         <p className="text-neutral-700">Materials, colors, and durability.</p>
         <Link href="/siding#faq" className="underline">
-          See Siding FAQs ->
+          See Siding FAQs &rarr;
         </Link>
       </section>
 
@@ -38,7 +38,7 @@ export default function Page() {
         <h2 className="text-xl font-semibold">Gutter FAQs</h2>
         <p className="text-neutral-700">Leaks, guards, and flow issues.</p>
         <Link href="/gutters#faq" className="underline">
-          See Gutter FAQs ->
+          See Gutter FAQs &rarr;
         </Link>
       </section>
     </main>
