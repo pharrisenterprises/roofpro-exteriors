@@ -6,10 +6,16 @@ import { urlFor } from "@/sanity/lib/image";
 import type { BlogPost } from "@/types/cms";
 
 export const revalidate = 60;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://roofproexteriors.com";
+const title = "Exterior Repairs Blog | RoofPro Exteriors";
+const description = "Exterior repair how-tos and guides for Central Virginia homeowners.";
 
 export const metadata = {
-  title: "Exterior Repairs Blog | RoofPro Exteriors",
-  description: "Exterior repair how-tos and guides for Central Virginia homeowners.",
+  title,
+  description,
+  alternates: { canonical: `${SITE_URL}/exterior-repairs/blog` },
+  openGraph: { title, description, url: `${SITE_URL}/exterior-repairs/blog` },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
@@ -18,8 +24,17 @@ const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
   service->{title, slug}
 }`;
 
-export default async function ExtRepairsBlogIndex() {
-  const posts: BlogPost[] = await client.fetch(QUERY, { serviceSlug: "exterior-repairs" });
+export default async function ExteriorRepairsBlogIndex() {
+  const posts: BlogPost[] = await client.fetch(
+    groq`*[_type=="blog"
+        && defined(service->slug.current)
+        && lower(service->slug.current) == lower($serviceSlug)]
+      | order(publishedAt desc)[0...20]{
+        _id, title, slug, excerpt, coverImage, publishedAt,
+        service->{title, slug}
+      }`,
+    { serviceSlug: "Exterior Repairs" }
+  );
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">

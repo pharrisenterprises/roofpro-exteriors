@@ -11,13 +11,49 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", displa
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
 const GOOGLE_SITE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+const SITE_URL_RAW = process.env.NEXT_PUBLIC_SITE_URL;
+// Normalize SITE_URL to a valid absolute URL; fall back to https with host when needed.
+const SITE_URL = SITE_URL_RAW
+  ? SITE_URL_RAW.startsWith("http")
+    ? SITE_URL_RAW
+    : `https://${SITE_URL_RAW}`
+  : "https://roofproexteriors.com";
+const metadataBaseSafe = (() => {
+  try {
+    return new URL(SITE_URL);
+  } catch {
+    return new URL("https://roofproexteriors.com");
+  }
+})();
+const DEFAULT_BRAND = "RoofPro Exteriors";
+const SAME_AS_RAW = (process.env.NEXT_PUBLIC_SAME_AS || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+const SAME_AS = SAME_AS_RAW.length > 0 ? SAME_AS_RAW : [SITE_URL];
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "RoofPro Exteriors – Roofing, Siding, Gutters & Exterior Repairs | Richmond, VA",
+  metadataBase: metadataBaseSafe,
+  title: "RoofPro Exteriors - Roofing, Siding, Gutters & Exterior Repairs | Richmond, VA",
   description: "Roofing, siding, gutters, and exterior repair specialists serving Greater Richmond / Central Virginia.",
+  alternates: { canonical: "/" },
   icons: { icon: "/favicon.ico" },
+  openGraph: {
+    title: "RoofPro Exteriors - Roofing, Siding, Gutters & Exterior Repairs | Richmond, VA",
+    description: "Roofing, siding, gutters, and exterior repair specialists serving Greater Richmond / Central Virginia.",
+    url: SITE_URL,
+    siteName: DEFAULT_BRAND,
+    type: "website",
+    images: [{ url: `${SITE_URL}/RoofPro-Exteriors New Logo.jpg` }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RoofPro Exteriors - Roofing, Siding, Gutters & Exterior Repairs | Richmond, VA",
+    description: "Roofing, siding, gutters, and exterior repair specialists serving Greater Richmond / Central Virginia.",
+    images: [`${SITE_URL}/RoofPro-Exteriors New Logo.jpg`],
+  },
   verification: GOOGLE_SITE_VERIFICATION ? { google: GOOGLE_SITE_VERIFICATION } : undefined,
 };
 
@@ -32,20 +68,27 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     /* noop: fallbacks below */
   }
 
-  const brand = settings?.brandName || "RoofPro Exteriors";
-  const phone = settings?.phone || "(804) 877-8616";
+  const brand = settings?.brandName || DEFAULT_BRAND;
+  const phone = settings?.phone || "(804) 657-4546";
   const serviceArea = settings?.serviceArea || "Greater Richmond, VA";
+  const phoneE164 = `+1-${phone.replace(/[^0-9]/g, "")}`;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "RoofingContractor",
     name: brand,
-    url: "https://www.roofproexteriors.com",
-    telephone: `+1-${phone.replace(/[^0-9]/g, "")}`,
-    image: "https://www.roofproexteriors.com/logo-roofpro.PNG",
+    "@id": `${SITE_URL}#organization`,
+    url: SITE_URL,
+    telephone: phoneE164,
+    image: `${SITE_URL}/RoofPro-Exteriors New Logo.jpg`,
     areaServed: ["Richmond VA", "Henrico VA", "Chesterfield VA", "Central Virginia"],
-    sameAs: [],
-    address: { "@type": "PostalAddress", addressRegion: "VA", addressLocality: "Richmond", addressCountry: "US" },
+    sameAs: SAME_AS,
+    address: {
+      "@type": "PostalAddress",
+      addressRegion: "VA",
+      addressLocality: "Richmond",
+      addressCountry: "US",
+    },
   };
 
   return (
@@ -79,10 +122,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
         <footer className="w-full border-t">
           <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-neutral-600">
-            © {new Date().getFullYear()} {brand} · Serving {serviceArea}. All rights reserved.
+            (c) {new Date().getFullYear()} {brand} - Serving {serviceArea}. All rights reserved.
           </div>
         </footer>
       </body>
     </html>
   );
 }
+
+
+

@@ -1,6 +1,17 @@
-import Link from 'next/link';
+﻿import Link from "next/link";
+import type { Metadata } from "next";
 
-export const metadata = { title: 'FAQ Library | Roof Pro Exteriors' };
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://roofproexteriors.com";
+const title = "FAQ Library | RoofPro Exteriors";
+const description = "Common roofing, siding, and gutter questions answered by RoofPro Exteriors for Richmond, VA homeowners.";
+
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: `${SITE_URL}/faq-library` },
+  openGraph: { title, description, url: `${SITE_URL}/faq-library` },
+  twitter: { card: "summary_large_image", title, description },
+};
 
 export default function Page() {
   return (
@@ -10,19 +21,25 @@ export default function Page() {
       <section>
         <h2 className="text-xl font-semibold">Roofing FAQs</h2>
         <p className="text-neutral-700">Top questions homeowners ask.</p>
-        <Link href="/roofing#faq" className="underline">See Roofing FAQs →</Link>
+        <Link href="/roofing#faq" className="underline">
+          See Roofing FAQs ->
+        </Link>
       </section>
 
       <section>
         <h2 className="text-xl font-semibold">Siding FAQs</h2>
         <p className="text-neutral-700">Materials, colors, and durability.</p>
-        <Link href="/siding#faq" className="underline">See Siding FAQs →</Link>
+        <Link href="/siding#faq" className="underline">
+          See Siding FAQs ->
+        </Link>
       </section>
 
       <section>
         <h2 className="text-xl font-semibold">Gutter FAQs</h2>
         <p className="text-neutral-700">Leaks, guards, and flow issues.</p>
-        <Link href="/gutters#faq" className="underline">See Gutter FAQs →</Link>
+        <Link href="/gutters#faq" className="underline">
+          See Gutter FAQs ->
+        </Link>
       </section>
     </main>
   );

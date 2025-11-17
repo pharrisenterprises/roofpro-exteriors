@@ -7,6 +7,8 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import type { Image as SanityImage, PortableTextBlock } from "sanity";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://roofproexteriors.com";
+
 export const revalidate = 60;
 
 type Post = {
@@ -28,9 +30,9 @@ const POST_QUERY = groq`*[_type=="blog" && slug.current==$slug][0]{
 }`;
 
 export async function generateMetadata(
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: { slug: string } }
 ): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params;
   const data: Post | null = await client.fetch(POST_QUERY, { slug });
 
   const baseTitle = data?.title ?? "Blog Post";
@@ -39,19 +41,21 @@ export async function generateMetadata(
 
   const og = data?.seo?.ogImage ?? data?.coverImage;
   const images = og ? [{ url: urlFor(og).width(1200).height(630).url() }] : undefined;
+  const canonical = `${SITE_URL}/${data?.service?.slug ?? "exterior-repairs"}/blog/${slug}`;
 
   return {
     title,
     description,
-    openGraph: { title, description, images },
-    twitter: { card: "summary_large_image" },
+    alternates: { canonical },
+    openGraph: { title, description, url: canonical, type: "article", images },
+    twitter: { card: "summary_large_image", title, description, images },
   };
 }
 
-export default async function ExtRepairsPostPage(
-  { params }: { params: Promise<{ slug: string }> }
+export default async function ExteriorRepairsPostPage(
+  { params }: { params: { slug: string } }
 ) {
-  const { slug } = await params;
+  const { slug } = params;
   const post: Post | null = await client.fetch(POST_QUERY, { slug });
 
   if (!post) {
@@ -62,12 +66,32 @@ export default async function ExtRepairsPostPage(
     );
   }
 
+  const canonical = `${SITE_URL}/${post.service?.slug ?? "exterior-repairs"}/blog/${post.slug.current}`;
+  const description = post.seo?.description ?? post.excerpt ?? "";
+  const imageUrl = post.coverImage ? urlFor(post.coverImage).width(1200).height(630).url() : undefined;
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description,
+    image: imageUrl ? [imageUrl] : undefined,
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    mainEntityOfPage: canonical,
+    author: { "@type": "Organization", name: "RoofPro Exteriors", url: SITE_URL },
+    publisher: {
+      "@type": "Organization",
+      name: "RoofPro Exteriors",
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/RoofPro-Exteriors New Logo.jpg` },
+    },
+  };
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
       {post?.service?.slug && (
         <div className="mb-3">
           <Link href={`/${post.service.slug}`} className="text-sm underline">
-            ← Back to {post.service.title}
+            <- Back to {post.service.title}
           </Link>
         </div>
       )}
@@ -92,6 +116,11 @@ export default async function ExtRepairsPostPage(
           <PortableText value={post.content} />
         </article>
       )}
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
     </main>
-  ); 
+  );
 }

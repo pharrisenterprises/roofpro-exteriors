@@ -6,10 +6,16 @@ import { urlFor } from "@/sanity/lib/image";
 import type { BlogPost } from "@/types/cms";
 
 export const revalidate = 60;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://roofproexteriors.com";
+const title = "Siding Blog | RoofPro Exteriors";
+const description = "Tips and guides on siding repair and replacement in Greater Richmond, VA.";
 
 export const metadata = {
-  title: "Siding Blog | RoofPro Exteriors",
-  description: "Tips and guides on siding repair and replacement in Greater Richmond, VA.",
+  title,
+  description,
+  alternates: { canonical: `${SITE_URL}/siding/blog` },
+  openGraph: { title, description, url: `${SITE_URL}/siding/blog` },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
@@ -19,7 +25,16 @@ const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
 }`;
 
 export default async function SidingBlogIndex() {
-  const posts: BlogPost[] = await client.fetch(QUERY, { serviceSlug: "siding" });
+  const posts: BlogPost[] = await client.fetch(
+    groq`*[_type=="blog"
+        && defined(service->slug.current)
+        && lower(service->slug.current) == lower($serviceSlug)]
+      | order(publishedAt desc)[0...20]{
+        _id, title, slug, excerpt, coverImage, publishedAt,
+        service->{title, slug}
+      }`,
+    { serviceSlug: "Siding" }
+  );
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">

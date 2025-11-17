@@ -6,6 +6,7 @@ import { urlFor } from "@/sanity/lib/image";
 import ServiceFromSanity from "@/components/ServiceFromSanity";
 
 export const revalidate = 60;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://roofproexteriors.com";
 
 // You named the service "Gutters" in Sanity.
 // We'll resolve that service (case-insensitive) and then filter by its _id.
@@ -65,12 +66,14 @@ export async function generateMetadata(): Promise<Metadata> {
     service?.seo?.description ?? "Gutter installation, repair, and protection in Greater Richmond, VA.";
   const ogSrc = service?.seo?.ogImage ?? service?.heroImage;
   const images = ogSrc ? [{ url: urlFor(ogSrc).width(1200).height(630).url() }] : undefined;
+  const canonical = `${SITE_URL}/${ROUTE_SLUG}`;
 
   return {
     title,
     description,
-    openGraph: { title, description, images },
-    twitter: { card: "summary_large_image" },
+    alternates: { canonical },
+    openGraph: { title, description, url: canonical, images },
+    twitter: { card: "summary_large_image", title, description, images },
   };
 }
 

@@ -5,26 +5,37 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import { SERVICE_BY_SLUG_QUERY } from "@/sanity/lib/queries";
 import type { Faq } from "@/types/cms";
+import type { PortableTextBlock } from "sanity";
 
 export const revalidate = 60;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://roofproexteriors.com";
+
+const toPlainText = (blocks: PortableTextBlock[] = []) =>
+  blocks
+    .map((block) =>
+      Array.isArray((block as any).children)
+        ? (block as any).children.map((child: any) => child.text ?? "").join("")
+        : ""
+    )
+    .join("\n")
+    .trim();
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await client.fetch(SERVICE_BY_SLUG_QUERY, { slug: "siding" });
 
-  const title = data?.seo?.title
-    ? `${data.seo.title} – FAQs`
-    : "Siding FAQs | RoofPro Exteriors";
+  const title = data?.seo?.title ? `${data.seo.title} - FAQs` : "Siding FAQs | RoofPro Exteriors";
   const description =
     data?.seo?.description ?? "Common siding questions answered by our Richmond, VA team.";
   const ogSrc = data?.seo?.ogImage ?? data?.heroImage;
   const images = ogSrc ? [{ url: urlFor(ogSrc).width(1200).height(630).url() }] : undefined;
+  const canonical = `${SITE_URL}/siding/faq`;
 
   return {
     title,
     description,
-    openGraph: { title, description, images },
-    twitter: { card: "summary_large_image" },
-    alternates: { canonical: "https://roofproexteriors.com/siding/faq" },
+    alternates: { canonical },
+    openGraph: { title, description, url: canonical, images },
+    twitter: { card: "summary_large_image", title, description, images },
   };
 }
 
@@ -32,7 +43,31 @@ const QUERY = groq`*[_type=="faq" && service->slug.current==$serviceSlug]
 |order(question asc){ _id, question, answer }`;
 
 export default async function Page() {
-  const faqs: Faq[] = await client.fetch(QUERY, { serviceSlug: "siding" });
+  const faqs: Faq[] = await client.fetch(
+    groq`*[_type=="faq"
+        && defined(service->slug.current)
+        && lower(service->slug.current) == lower($serviceSlug)]
+      | order(question asc){
+        _id, question, answer
+      }`,
+    { serviceSlug: "Siding" }
+  );
+
+  const faqJsonLd =
+    faqs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.map((f) => ({
+            "@type": "Question",
+            name: f.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: toPlainText(f.answer as PortableTextBlock[]),
+            },
+          })),
+        }
+      : null;
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
@@ -48,6 +83,13 @@ export default async function Page() {
         ))}
         {faqs.length === 0 && <p>No FAQs yet.</p>}
       </ul>
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
     </main>
-  ); 
+  );
 }

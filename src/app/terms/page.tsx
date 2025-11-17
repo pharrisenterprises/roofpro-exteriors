@@ -34,7 +34,7 @@ export default function TermsPage() {
       <h3>Contact Information</h3>
       <ul>
         <li>Email: <a href="mailto:roofproexterior@gmail.com">roofproexterior@gmail.com</a></li>
-        <li>Phone: <a href="tel:18048778616">(804) 877-8616</a></li>
+        <li>Phone: <a href="tel:18046574546">(804) 657-4546</a></li>
         <li>Parent Organization: RVA Home Services Group</li>
       </ul>
 
@@ -187,7 +187,7 @@ export default function TermsPage() {
       <p>
         <strong>RoofPro Exteriors – A Division of RVA Home Services Group</strong><br />
         Email: <a href="mailto:roofproexterior@gmail.com">roofproexterior@gmail.com</a><br />
-        Phone: <a href="tel:18048778616">(804) 877-8616</a><br />
+        Phone: <a href="tel:18046574546">(804) 657-4546</a><br />
         Service Area: Greater Richmond, Virginia
       </p>
     </main>

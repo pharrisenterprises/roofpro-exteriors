@@ -6,10 +6,16 @@ import { urlFor } from "@/sanity/lib/image";
 import type { BlogPost } from "@/types/cms";
 
 export const revalidate = 60;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://roofproexteriors.com";
+const title = "Gutters Blog | RoofPro Exteriors";
+const description = "Tips and guides on gutters repair and replacement in Greater Richmond, VA.";
 
 export const metadata = {
-  title: "gutters Blog | RoofPro Exteriors",
-  description: "Tips and guides on gutters repair and replacement in Greater Richmond, VA.",
+  title,
+  description,
+  alternates: { canonical: `${SITE_URL}/gutters/blog` },
+  openGraph: { title, description, url: `${SITE_URL}/gutters/blog` },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
@@ -27,7 +33,7 @@ export default async function GuttersBlogIndex() {
         _id, title, slug, excerpt, coverImage, publishedAt,
         service->{title, slug}
       }`,
-    { serviceSlug: "Gutters" } // or "gutters" – either works now
+    { serviceSlug: "Gutters" }
   );
 
   return (

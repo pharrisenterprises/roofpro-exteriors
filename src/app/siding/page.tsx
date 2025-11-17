@@ -7,6 +7,7 @@ import Link from "next/link";
 import { groq } from "next-sanity";
 
 export const revalidate = 60;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://roofproexteriors.com";
 
 interface Blog {
   _id: string;
@@ -28,7 +29,14 @@ export async function generateMetadata(): Promise<Metadata> {
     data?.seo?.description ?? "Professional siding installation and repair services in Richmond, VA.";
   const ogSrc = data?.seo?.ogImage ?? data?.heroImage;
   const images = ogSrc ? [{ url: urlFor(ogSrc).width(1200).height(630).url() }] : undefined;
-  return { title, description, openGraph: { title, description, images }, twitter: { card: "summary_large_image" } };
+  const canonical = `${SITE_URL}/siding`;
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: { title, description, url: canonical, images },
+    twitter: { card: "summary_large_image", title, description, images },
+  };
 }
 
 export default async function Page() {

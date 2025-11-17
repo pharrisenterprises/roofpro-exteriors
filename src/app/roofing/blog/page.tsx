@@ -6,10 +6,16 @@ import { urlFor } from "@/sanity/lib/image";
 import type { BlogPost } from "@/types/cms";
 
 export const revalidate = 60;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://roofproexteriors.com";
+const title = "Roofing Blog | RoofPro Exteriors";
+const description = "Guides and tips on roofing repair, replacement, and maintenance in Greater Richmond, VA.";
 
 export const metadata = {
-  title: "Roofing Blog | RoofPro Exteriors",
-  description: "Guides and tips on roofing repair, replacement, and maintenance in Greater Richmond, VA.",
+  title,
+  description,
+  alternates: { canonical: `${SITE_URL}/roofing/blog` },
+  openGraph: { title, description, url: `${SITE_URL}/roofing/blog` },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
@@ -19,12 +25,21 @@ const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
 }`;
 
 export default async function RoofingBlogIndex() {
-  const posts: BlogPost[] = await client.fetch(QUERY, { serviceSlug: "roofing" });
+  const posts: BlogPost[] = await client.fetch(
+    groq`*[_type=="blog"
+        && defined(service->slug.current)
+        && lower(service->slug.current) == lower($serviceSlug)]
+      | order(publishedAt desc)[0...20]{
+        _id, title, slug, excerpt, coverImage, publishedAt,
+        service->{title, slug}
+      }`,
+    { serviceSlug: "Roofing" }
+  );
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="text-3xl font-bold mb-6">Roofing Blog</h1>
-      {(!posts || posts.length === 0) && <p className="text-neutral-600">No posts yet for Roofing.</p>}
+      {posts.length === 0 && <p className="text-neutral-600">No posts yet for Roofing.</p>}
       <ul className="space-y-8">
         {posts.map((p) => (
           <li key={p._id} className="border rounded-xl p-4">
