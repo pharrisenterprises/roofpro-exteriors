@@ -29,10 +29,12 @@ const POST_QUERY = groq`*[_type=="blog" && slug.current==$slug][0]{
   service->{ title, "slug": slug.current }
 }`;
 
+type PageParams = { params: Promise<{ slug: string }> };
+
 export async function generateMetadata(
-  { params }: { params: { slug: string } }
+  { params }: PageParams
 ): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const data: Post | null = await client.fetch(POST_QUERY, { slug });
 
   const baseTitle = data?.title ?? "Blog Post";
@@ -53,9 +55,9 @@ export async function generateMetadata(
 }
 
 export default async function GuttersPostPage(
-  { params }: { params: { slug: string } }
+  { params }: PageParams
 ) {
-  const { slug } = params;
+  const { slug } = await params;
   const post: Post | null = await client.fetch(POST_QUERY, { slug });
 
   if (!post) {
