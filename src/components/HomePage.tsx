@@ -87,7 +87,7 @@ export default function HomePage() {
         </h2>
         <p className="text-slate-700 leading-relaxed max-w-2xl mx-auto">
           Every <strong>RoofPro Exteriors</strong> project is measured, specified, and installed by pros using manufacturer-approved methods.
-          We protect your home's value with premium roofing systems, sealed siding, properly pitched gutters, and
+          We protect your home&apos;s value with premium roofing systems, sealed siding, properly pitched gutters, and
           smart exterior repairs that withstand Virginia weather.
         </p>
       </section>
@@ -227,7 +227,7 @@ export default function HomePage() {
           {[
             {
               q: "Do you offer free inspections?",
-              a: "Yes — we'll evaluate your roof, siding, and gutters at no cost and provide a clear estimate.",
+              a: "Yes — we&apos;ll evaluate your roof, siding, and gutters at no cost and provide a clear estimate.",
             },
             {
               q: "Which roofing materials do you install?",
@@ -299,6 +299,7 @@ export default function HomePage() {
     </main>
   );
 }
+
 
 
 

@@ -10,13 +10,14 @@ import type { PortableTextBlock } from "sanity";
 export const revalidate = 60;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://roofproexteriors.com";
 
+type PortableTextChild = { text?: string };
+
 const toPlainText = (blocks: PortableTextBlock[] = []) =>
   blocks
-    .map((block) =>
-      Array.isArray((block as any).children)
-        ? (block as any).children.map((child: any) => child.text ?? "").join("")
-        : ""
-    )
+    .map((block) => {
+      const children = (block as { children?: PortableTextChild[] }).children;
+      return Array.isArray(children) ? children.map((child) => child.text ?? "").join("") : "";
+    })
     .join("\n")
     .trim();
 
@@ -40,9 +41,6 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: { card: "summary_large_image", title, description, images },
   };
 }
-
-const QUERY = groq`*[_type=="faq" && service->slug.current==$serviceSlug]
-|order(question asc){ _id, question, answer }`;
 
 export default async function Page() {
   const faqs: Faq[] = await client.fetch(

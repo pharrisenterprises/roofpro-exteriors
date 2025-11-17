@@ -110,6 +110,6 @@ export default function ServicePage({ service }: { service: ServiceConfig }) {
 
 // Deprecated helper kept only to avoid breaking old imports during refactor.
 // Remove after confirming no files call this.
-export function getService(_slug: string): never {
+export function getService(): never {
   throw new Error("Deprecated: getService() was removed. Fetch service content from Sanity instead.");
 }

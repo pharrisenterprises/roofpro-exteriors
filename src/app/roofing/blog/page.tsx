@@ -18,12 +18,6 @@ export const metadata = {
   twitter: { card: "summary_large_image", title, description },
 };
 
-const QUERY = groq`*[_type=="blog" && service->slug.current==$serviceSlug]
-|order(publishedAt desc)[0...20]{
-  _id, title, slug, excerpt, coverImage, publishedAt,
-  service->{title, slug}
-}`;
-
 export default async function RoofingBlogIndex() {
   const posts: BlogPost[] = await client.fetch(
     groq`*[_type=="blog"
